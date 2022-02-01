@@ -1,6 +1,6 @@
 {
-    "name": "ab_race",
-    "short_name": "ab_race",
+    "name": "ab_race_flutter",
+    "short_name": "ab_race_flutter",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

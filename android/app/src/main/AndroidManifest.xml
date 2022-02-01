@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ab_race">
+    package="dev.erlangparasu.ab_race_flutter">
    <application
-        android:label="ab_race"
+        android:label="ab_race_flutter"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
