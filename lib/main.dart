@@ -49,6 +49,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     3696, // 3.6 detik
   ];
 
+  String _hashTmp = '';
+
   @override
   void initState() {
     super.initState();
@@ -87,8 +89,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  String _hashTmp = '';
-
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -126,6 +126,39 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         }
       }
     });
+  }
+
+  void _addAnimController(int durationMilis) {
+    var animController = AnimationController(
+      vsync: this, // the SingleTickerProviderStateMixin
+      duration: Duration(milliseconds: durationMilis),
+    );
+
+    CurvedAnimation curved1 = CurvedAnimation(
+      parent: animController,
+      curve: Curves.easeInOut,
+    );
+
+    _animControllers.add(animController);
+    _animCars.add(curved1);
+  }
+
+  AnimatedBuilder _generateOneRoad(Animation<double> anim) {
+    return AnimatedBuilder(
+      animation: anim,
+      builder: (context, w) {
+        return Row(
+          children: [
+            Expanded(
+              child: CupertinoSlider(
+                value: anim.value,
+                onChanged: (value) {},
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -210,39 +243,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           },
         ),
       ),
-    );
-  }
-
-  void _addAnimController(int durationMilis) {
-    var animController = AnimationController(
-      vsync: this, // the SingleTickerProviderStateMixin
-      duration: Duration(milliseconds: durationMilis),
-    );
-
-    CurvedAnimation curved1 = CurvedAnimation(
-      parent: animController,
-      curve: Curves.easeInOut,
-    );
-
-    _animControllers.add(animController);
-    _animCars.add(curved1);
-  }
-
-  AnimatedBuilder _generateOneRoad(Animation<double> anim) {
-    return AnimatedBuilder(
-      animation: anim,
-      builder: (context, w) {
-        return Row(
-          children: [
-            Expanded(
-              child: CupertinoSlider(
-                value: anim.value,
-                onChanged: (value) {},
-              ),
-            )
-          ],
-        );
-      },
     );
   }
 }
