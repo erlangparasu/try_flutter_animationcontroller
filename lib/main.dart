@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Created by Erlang Parasu 2022
 
@@ -13,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter AnimationController',
+      title: 'AB Race',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter AnimationController'),
+      home: const MyHomePage(title: 'AB Race'),
     );
   }
 }
@@ -36,7 +37,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   final List<AnimationController> _animControllers = [];
   final List<Animation<double>> _animCars = [];
-  bool _isAnimForward = true;
+  bool _isAnimForward = false;
+
+  late TextEditingController _textController1;
+  late TextEditingController _textController2;
+  late TextEditingController _textController3;
 
   final List<int> _durationList = [
     2465, // 2.4 detik
@@ -48,11 +53,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
+    _textController1 = TextEditingController(text: _durationList[0].toString());
+    _textController2 = TextEditingController(text: _durationList[1].toString());
+    _textController3 = TextEditingController(text: _durationList[2].toString());
+
     _animControllers.clear();
     _animCars.clear();
-    for (var dur in _durationList) {
-      _addAnimController(dur);
-    }
+
+    var num1 = _textController1.value.text;
+    var num2 = _textController2.value.text;
+    var num3 = _textController3.value.text;
+
+    _addAnimController(int.parse(num1));
+    _addAnimController(int.parse(num2));
+    _addAnimController(int.parse(num3));
   }
 
   // @override
@@ -66,16 +80,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (var c in _animControllers) {
       c.dispose();
     }
+
     _animControllers.clear();
     _animCars.clear();
 
     super.dispose();
   }
 
+  String _hashTmp = '';
+
   void _incrementCounter() {
     setState(() {
       _counter++;
 
+      var num1 = _textController1.value.text;
+      var num2 = _textController2.value.text;
+      var num3 = _textController3.value.text;
+
+      var hashNew = num1.toString() + num2.toString() + num3.toString();
+      if (hashNew != _hashTmp) {
+        _hashTmp = hashNew;
+
+        /// Clear
+        for (var c in _animControllers) {
+          c.dispose();
+        }
+
+        _animControllers.clear();
+        _animCars.clear();
+
+        /// Add
+        _addAnimController(int.parse(num1));
+        _addAnimController(int.parse(num2));
+        _addAnimController(int.parse(num3));
+      }
+
+      _isAnimForward = !_isAnimForward;
       if (_isAnimForward) {
         for (var c in _animControllers) {
           c.forward();
@@ -85,8 +125,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           c.reverse();
         }
       }
-
-      _isAnimForward = !_isAnimForward;
     });
   }
 
@@ -100,6 +138,36 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            const SizedBox(
+              height: 16,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CupertinoTextField(
+                controller: _textController1,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CupertinoTextField(
+                controller: _textController2,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CupertinoTextField(
+                controller: _textController3,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
@@ -120,13 +188,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ],
               ),
             ),
+            const SizedBox(
+              height: 16,
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: Builder(
+          builder: (context) {
+            if (!_isAnimForward) {
+              return const Icon(Icons.play_arrow);
+            } else {
+              return const RotatedBox(
+                quarterTurns: 90,
+                child: Icon(Icons.play_arrow),
+              );
+            }
+          },
+        ),
       ),
     );
   }
